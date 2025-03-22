@@ -1,0 +1,10 @@
+name: CommunityGoals
+version: '1.0'
+main: me.synicallyevil.communityGoals.CommunityGoals
+api-version: '1.20'
+prefix: CommunityGoals
+authors: [ SynicallyEvil ]
+description: Community Goals
+
+commands:
+  fund:
