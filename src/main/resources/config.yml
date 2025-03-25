@@ -1,6 +1,6 @@
 fund:
   coinsengine:
-    enabled: true
+    enabled: false
     currency: 'tokens'
   symbol: '|'
   symbol_amount: 40
@@ -17,7 +17,7 @@ fund:
     fundtop:
       header:
         - 'Fund Top:'
-      playerformat: '%place%: %player% %amount%'
+      playerformat: '%place%: %player%'
       footer:
         - 'It''s a footer'
     others:

@@ -10,54 +10,50 @@ import java.util.UUID;
 
 public class FundTop {
 
-    private CommunityGoals cg;
-    private File top;
+    private final CommunityGoals cg;
+    private final File topDirectory;
+    private final File topFile;
 
-    public FundTop(CommunityGoals cg){
+    public FundTop(CommunityGoals cg) {
         this.cg = cg;
-        this.top = new File(cg.getDataFolder(), File.separator + "fundtops" + File.separator);
+        this.topDirectory = new File(cg.getDataFolder(), "fundtops");
+        this.topFile = new File(topDirectory, "top.yml");
 
-        if(!(top.exists()))
-            top.mkdirs();
+        ensureFileExists();
+    }
 
-        File file = new File(top, "top.yml");
-        FileConfiguration data = YamlConfiguration.loadConfiguration(file);
+    private void ensureFileExists() {
+        if (!topDirectory.exists()) {
+            topDirectory.mkdirs();
+        }
 
-        if(!(file.exists())){
+        if (!topFile.exists()) {
             try {
-                file.createNewFile();
-
-            }catch (IOException e){
+                topFile.createNewFile();
+                getConfig().save(topFile);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
-        save(data, file);
     }
 
-    private void save(FileConfiguration data, File file){
+    public void setPaid(UUID uuid, int amount) {
+        FileConfiguration data = getConfig();
+        int currentAmount = data.getInt(uuid.toString(), 0);
+        data.set(uuid.toString(), currentAmount + amount);
+        save(data);
+    }
+
+    public FileConfiguration getConfig() {
+        return YamlConfiguration.loadConfiguration(topFile);
+    }
+
+    private void save(FileConfiguration data) {
         try {
-            data.save(file);
+            data.save(topFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-    public void setPaid(UUID uuid, int amount){
-        File file = new File(top, "top.yml");
-        FileConfiguration data = YamlConfiguration.loadConfiguration(file);
-
-        if(data.isSet(String.valueOf(uuid))){
-            int a = data.getInt(String.valueOf(uuid));
-            data.set(String.valueOf(uuid), a+amount);
-        }else
-            data.set(String.valueOf(uuid), amount);
-
-        save(data, file);
-    }
-
-    public FileConfiguration getConfig(){
-        File file = new File(top, "top.yml");
-        return YamlConfiguration.loadConfiguration(file);
-    }
 }
+
