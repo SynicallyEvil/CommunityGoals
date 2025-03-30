@@ -1,22 +1,25 @@
 package me.synicallyevil.communityGoals.managers;
 
 import me.synicallyevil.communityGoals.CommunityGoals;
+import me.synicallyevil.communityGoals.utils.GoalTypes;
 
 import java.util.List;
 
-public class FundManager {
+public class GoalManager {
 
     private final CommunityGoals cg;
     private String name;
+    private GoalTypes type;
     private final int number;
     private int current;
     private int max;
     private boolean isDone;
     private List<String> commands;
 
-    public FundManager(CommunityGoals cg, String name, int number, int current, int max, List<String> commands) {
+    public GoalManager(CommunityGoals cg, String name, GoalTypes type, int number, int current, int max, List<String> commands) {
         this.cg = cg;
         this.name = name;
+        this.type = type;
         this.number = number;
         this.max = max;
         this.commands = commands;
@@ -58,6 +61,14 @@ public class FundManager {
         return name;
     }
 
+    public GoalTypes getType(){
+        return type;
+    }
+
+    public void setType(GoalTypes type) {
+        this.type = type;
+    }
+
     public void setCommands(List<String> commands) {
         this.commands = commands;
     }
@@ -81,25 +92,27 @@ public class FundManager {
     }
 
     private void updateConfig() {
-        cg.getConfig().set("fund.goals." + number + ".current", current);
+        cg.getConfig().set("goal.goals." + number + ".current", current);
         cg.saveConfig();
     }
 
     public void updateFromConfig(org.bukkit.configuration.file.FileConfiguration config, int goal) {
-        setCurrent(config.getInt("fund.goals." + goal + ".current", 0));
-        setMax(config.getInt("fund.goals." + goal + ".max", 10000000));
-        setName(config.getString("fund.goals." + goal + ".name"));
-        setCommands(config.getStringList("fund.goals." + goal + ".console_commands"));
+        setCurrent(config.getInt("goal.goals." + goal + ".current", 0));
+        setMax(config.getInt("goal.goals." + goal + ".max", 10000000));
+        setName(config.getString("goal.goals." + goal + ".name"));
+        setType(GoalTypes.valueOf(config.getString("goal.goals." + goal + ".type").toUpperCase()));
+        setCommands(config.getStringList("goal.goals." + goal + ".console_commands"));
     }
 
-    public static FundManager createFromConfig(CommunityGoals cg, org.bukkit.configuration.file.FileConfiguration config, int goal) {
-        return new FundManager(
+    public static GoalManager createFromConfig(CommunityGoals cg, org.bukkit.configuration.file.FileConfiguration config, int goal) {
+        return new GoalManager(
                 cg,
-                config.getString("fund.goals." + goal + ".name"),
+                config.getString("goal.goals." + goal + ".name"),
+                GoalTypes.valueOf(config.getString("goal.goals." + goal + ".type").toUpperCase()),
                 goal,
-                config.getInt("fund.goals." + goal + ".current", 0),
-                config.getInt("fund.goals." + goal + ".max", 10000000),
-                config.getStringList("fund.goals." + goal + ".console_commands")
+                config.getInt("goal.goals." + goal + ".current", 0),
+                config.getInt("goal.goals." + goal + ".max", 10000000),
+                config.getStringList("goal.goals." + goal + ".console_commands")
         );
     }
 }

@@ -1,8 +1,8 @@
 package me.synicallyevil.communityGoals;
 
-import me.synicallyevil.communityGoals.commands.Fund;
-import me.synicallyevil.communityGoals.data.FundTop;
-import me.synicallyevil.communityGoals.managers.FundManager;
+import me.synicallyevil.communityGoals.commands.Goal;
+import me.synicallyevil.communityGoals.listeners.EventsListener;
+import me.synicallyevil.communityGoals.managers.GoalManager;
 import me.synicallyevil.communityGoals.utils.Utils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -16,9 +16,8 @@ import java.util.*;
 
 public final class CommunityGoals extends JavaPlugin {
 
-    private FundTop fundTop;
-    private final Map<Integer, FundManager> fundManager = new HashMap<>();
-    private final List<UUID> playersResettingFund = new ArrayList<>();
+    private final Map<Integer, GoalManager> goalManager = new HashMap<>();
+    private final List<UUID> playersResettingGoal = new ArrayList<>();
 
     private Economy economy;
     private boolean coinEngineEnabled = false;
@@ -30,8 +29,8 @@ public final class CommunityGoals extends JavaPlugin {
         reloadConfig();
 
         registerCommands();
-        initializeFundTop();
-        reloadFunds();
+        registerListeners();
+        reloadGoals();
     }
 
     @Override
@@ -40,20 +39,20 @@ public final class CommunityGoals extends JavaPlugin {
     }
 
     private void registerCommands() {
-        Objects.requireNonNull(getCommand("fund")).setExecutor(new Fund(this));
+        Objects.requireNonNull(getCommand("goal")).setExecutor(new Goal(this));
     }
 
-    private void initializeFundTop() {
-        fundTop = new FundTop(this);
+    private void registerListeners(){
+        getServer().getPluginManager().registerEvents(new EventsListener(this), this);
     }
 
-    public void reloadFunds() {
+    public void reloadGoals() {
         configureEconomy();
-        loadFundGoals();
+        loadGoals();
     }
 
     private void configureEconomy() {
-        if (getConfig().getBoolean("funds.coinsengine.enabled")) {
+        if (getConfig().getBoolean("goal.coinsengine.enabled")) {
             setupCoinsEngine();
         } else {
             setupVault();
@@ -61,7 +60,7 @@ public final class CommunityGoals extends JavaPlugin {
     }
 
     private void setupCoinsEngine() {
-        String currencyName = getConfig().getString("funds.coinsengine.currency", "tokens");
+        String currencyName = getConfig().getString("goal.coinsengine.currency", "tokens");
         currency = CoinsEngineAPI.getCurrency(currencyName);
 
         if (currency != null) {
@@ -88,21 +87,21 @@ public final class CommunityGoals extends JavaPlugin {
         }
     }
 
-    private void loadFundGoals() {
-        Optional.ofNullable(getConfig().getConfigurationSection("fund.goals"))
+    private void loadGoals() {
+        Optional.ofNullable(getConfig().getConfigurationSection("goal.goals"))
                 .ifPresent(section -> section.getKeys(false).stream()
                         .filter(Utils::isNumber)
                         .map(Integer::parseInt)
-                        .forEach(this::updateFundManager));
+                        .forEach(this::updateGoalManager));
     }
 
-    private void updateFundManager(int goal) {
-        if (fundManager.containsKey(goal)) {
-            FundManager fund = fundManager.get(goal);
-            fund.updateFromConfig(getConfig(), goal);
-            fund.checkDone();
+    private void updateGoalManager(int goal) {
+        if (goalManager.containsKey(goal)) {
+            GoalManager goalM = goalManager.get(goal);
+            goalM.updateFromConfig(getConfig(), goal);
+            goalM.checkDone();
         } else {
-            fundManager.put(goal, FundManager.createFromConfig(this, getConfig(), goal));
+            goalManager.put(goal, GoalManager.createFromConfig(this, getConfig(), goal));
         }
     }
 
@@ -118,15 +117,11 @@ public final class CommunityGoals extends JavaPlugin {
         return coinEngineEnabled ? CoinsEngineAPI.getBalance(player, currency) : economy.getBalance(player);
     }
 
-    public FundTop getFundTop() {
-        return fundTop;
+    public List<UUID> getPlayersResettingGoal() {
+        return Collections.unmodifiableList(playersResettingGoal);
     }
 
-    public List<UUID> getPlayersResettingFund() {
-        return Collections.unmodifiableList(playersResettingFund);
-    }
-
-    public Map<Integer, FundManager> getFundManager() {
-        return fundManager;
+    public Map<Integer, GoalManager> getGoalManager() {
+        return goalManager;
     }
 }

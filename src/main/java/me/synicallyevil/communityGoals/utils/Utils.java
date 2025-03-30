@@ -1,6 +1,6 @@
 package me.synicallyevil.communityGoals.utils;
 
-import me.synicallyevil.communityGoals.managers.FundManager;
+import me.synicallyevil.communityGoals.managers.GoalManager;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.*;
@@ -26,7 +26,7 @@ public class Utils {
         return String.format("%.2f%%", ((double) current * 100.0) / max);
     }
 
-    public static FundManager getCurrentFund(Map<Integer, FundManager> funds) {
+    public static GoalManager getCurrentGoal(Map<Integer, GoalManager> funds) {
         return funds.values().stream()
                 .filter(fund -> !fund.isDone())
                 .findFirst()

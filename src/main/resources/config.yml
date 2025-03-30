@@ -1,4 +1,4 @@
-fund:
+goal:
   coinsengine:
     enabled: false
     currency: 'tokens'
@@ -6,53 +6,43 @@ fund:
   symbol_amount: 40
   color_of_achieved: '&a'
   color_of_remaining: '&7'
-  amount_of_or_greater_than_to_announce: 5000000
   messages:
-    fund:
-      - '&8&l(&a&l!&8&l) Name: %name%'
+    goal:
+      - '&8&l(&a&l!&8&l) Current Goal: %name%'
       - '&8&l(&a&l!&8&l) Progress: [%symbol%] [%percent%]'
-      - '&8&l(&a&l!&8&l) &7Use &c/fund help &7for help.'
+      - '&8&l(&a&l!&8&l) &7Use &c/goal help &7for help.'
     help:
       - 'Help'
-    fundtop:
-      header:
-        - 'Fund Top:'
-      playerformat: '%place%: %player%'
-      footer:
-        - 'It''s a footer'
     others:
-      fund_reset: '&8&l(&a&l!&8&l) &cFund &7has been reset!'
-      resetting_fund: '&8&l(&c&l!&8&l) &7Use &c/fund reset confirm&7!'
-      not_confirming_anything: '&8&l(&c&l!&8&l) &7Use &c/fund reset&7 first!'
-      no_perms: '&8&l(&c&l!&8&l) &7You don''t have permission to use the &c/fund reset &7command!'
+      goal_reset: '&8&l(&a&l!&8&l) &cGoal &7has been reset!'
+      resetting_goal: '&8&l(&c&l!&8&l) &7Use &c/goal reset confirm&7!'
+      not_confirming_anything: '&8&l(&c&l!&8&l) &7Use &c/goal reset&7 first!'
+      no_perms: '&8&l(&c&l!&8&l) &7You don''t have permission to use the &c/goal reset &7command!'
       not_enough_money: '&8&l(&c&l!&8&l) &7You don''t have enough money!'
-      all_funds_completed: '&8&l(&a&l!&8&l) &aAll funds are completed!'
+      all_goals_completed: '&8&l(&a&l!&8&l) &aAll goals have been completed!'
+      not_currency: '&8&l(&a&l!&8&l) &cThis goal isn''t currency based!'
       paid: '&8&l(&a&l!&8&l) &aYou have paid $%amount% to %name%!'
     broadcast:
-      message_when_funded_alot: '&8&l(&a&l!&8&l) &a%player% funded $%amount% to %name%!'
-      fund_finished: '&8&l(&a&l!&8&l) &a%fund% has been completed! Next fund: %next_fund%'
+      goal_finished: '&8&l(&a&l!&8&l) &a%goal% has been completed! Next goal: %next_goal%'
   goals:
     1:
-      name: 'Rank Kit Gear'
+      name: 'Donate 500 Tokens'
+      type: 'CURRENCY'
       current: 0
-      max: 10000000
+      max: 500
       console_commands:
         - 'say command here'
     2:
-      name: 'Kit Keys'
+      name: 'Trade with 250 Villagers'
+      type: 'VILLAGER_TRADE'
       current: 0
-      max: 25000000
+      max: 250
       console_commands:
         - 'say command here'
     3:
-      name: 'Events'
+      name: 'Repair 75 Iron Golems'
+      type: 'REPAIR_GOLEMS'
       current: 0
-      max: 50000000
-      console_commands:
-        - 'say command here'
-    4:
-      name: 'Envoys'
-      current: 0
-      max: 75000000
+      max: 75
       console_commands:
         - 'say command here'

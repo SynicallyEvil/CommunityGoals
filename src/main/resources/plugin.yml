@@ -3,10 +3,11 @@ version: '1.0'
 main: me.synicallyevil.communityGoals.CommunityGoals
 api-version: '1.20'
 prefix: CommunityGoals
-authors: [ SynicallyEvil ]
+authors: SynicallyEvil
 description: Community Goals
 softdepend: [Vault, CoinsEngine]
 
 commands:
-  fund:
+  goal:
     description: Fund a goal with a specified amount.
+    aliases: [goals]
