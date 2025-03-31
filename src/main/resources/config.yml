@@ -1,7 +1,9 @@
 goal:
   coinsengine:
-    enabled: false
+    enabled: true
     currency: 'tokens'
+  use_gui_for_goals: true
+  give_currency_on_ore_break: true
   symbol: '|'
   symbol_amount: 40
   color_of_achieved: '&a'
@@ -12,37 +14,46 @@ goal:
       - '&8&l(&a&l!&8&l) Progress: [%symbol%] [%percent%]'
       - '&8&l(&a&l!&8&l) &7Use &c/goal help &7for help.'
     help:
-      - 'Help'
+      - '&8&l(&a&l!&8&l) &7Use &a/goal &7to view the current goal or open the GUI.'
+      - '&8&l(&a&l!&8&l) &7Use &a/goal deposit <amount> &7on currency based goals.'
     others:
       goal_reset: '&8&l(&a&l!&8&l) &cGoal &7has been reset!'
       resetting_goal: '&8&l(&c&l!&8&l) &7Use &c/goal reset confirm&7!'
       not_confirming_anything: '&8&l(&c&l!&8&l) &7Use &c/goal reset&7 first!'
-      no_perms: '&8&l(&c&l!&8&l) &7You don''t have permission to use the &c/goal reset &7command!'
+      no_perms: '&8&l(&c&l!&8&l) &7You don''t have permission to use the &c/goal reset
+        &7command!'
       not_enough_money: '&8&l(&c&l!&8&l) &7You don''t have enough money!'
       all_goals_completed: '&8&l(&a&l!&8&l) &aAll goals have been completed!'
       not_currency: '&8&l(&a&l!&8&l) &cThis goal isn''t currency based!'
-      paid: '&8&l(&a&l!&8&l) &aYou have paid $%amount% to %name%!'
+      paid: '&8&l(&a&l!&8&l) &aYou have paid &f%amount% &ato &n%name%&r&a!'
     broadcast:
-      goal_finished: '&8&l(&a&l!&8&l) &a%goal% has been completed! Next goal: %next_goal%'
+      goal_finished: '&8&l(&a&l!&8&l) &a&n%goal%&f has been completed! Next goal: &a&n%next_goal%'
   goals:
-    1:
-      name: 'Donate 500 Tokens'
+    0:
+      name: 'Donate 15,000 Tokens'
       type: 'CURRENCY'
       current: 0
-      max: 500
+      max: 15000
       console_commands:
-        - 'say command here'
-    2:
+        - 'none'
+    1:
       name: 'Trade with 250 Villagers'
       type: 'VILLAGER_TRADE'
       current: 0
       max: 250
       console_commands:
-        - 'say command here'
-    3:
+        - 'none'
+    2:
       name: 'Repair 75 Iron Golems'
       type: 'REPAIR_GOLEMS'
       current: 0
       max: 75
       console_commands:
-        - 'say command here'
+        - 'none'
+    3:
+      name: 'Mine 350 Ore Blocks'
+      type: 'ORE_MINING'
+      current: 0
+      max: 350
+      console_commands:
+        - 'none'

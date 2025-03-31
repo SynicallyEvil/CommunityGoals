@@ -4,11 +4,18 @@ import me.synicallyevil.communityGoals.CommunityGoals;
 import me.synicallyevil.communityGoals.managers.GoalManager;
 import me.synicallyevil.communityGoals.utils.GoalTypes;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.List;
+import java.util.Map;
 
 import static me.synicallyevil.communityGoals.utils.Utils.*;
 
@@ -34,9 +41,6 @@ public class Goal implements CommandExecutor {
             case "deposit":
                 handleDeposit(player, args);
                 break;
-            case "help":
-                displayHelp(player);
-                break;
             case "reset":
                 handleReset(player, args);
                 break;
@@ -48,6 +52,11 @@ public class Goal implements CommandExecutor {
     }
 
     private void displayGoalInfo(Player player) {
+        if(cg.getConfig().getBoolean("goal.use_gui_for_goals")){
+            openGui(player);
+            return;
+        }
+
         GoalManager goal = getCurrentGoal(cg.getGoalManager());
         if (goal == null) {
             player.sendMessage(getColor(cg.getConfig().getString("goal.messages.others.all_goals_completed")));
@@ -62,10 +71,71 @@ public class Goal implements CommandExecutor {
                             cg.getConfig().getInt("goal.symbol_amount"),
                             cg.getConfig().getString("goal.color_of_achieved"),
                             cg.getConfig().getString("goal.color_of_remaining")))
-                    .replace("%total%", String.format("$%,d", goal.getMax()))
-                    .replace("%remaining%", String.format("$%,d", goal.getRemaining()));
+                    .replace("%total%", (goal.getType() == GoalTypes.CURRENCY ? String.format(cg.getSymbol(), goal.getMax()) : String.valueOf(goal.getMax())))
+                    .replace("%remaining%", (goal.getType() == GoalTypes.CURRENCY ? String.format(cg.getSymbol(), goal.getRemaining()) : String.valueOf(goal.getRemaining())));
             player.sendMessage(getColor(message));
         });
+    }
+
+    public void openGui(Player player) {
+        Inventory gui = Bukkit.createInventory(null, 9, getColor("&bGoal Information"));
+
+        // Create Items
+        ItemStack goalItem = new ItemStack(Material.NETHER_STAR);
+        ItemStack hiddenGoalItem = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemStack finishedGoalItem = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
+
+        ItemMeta gMeta = goalItem.getItemMeta();
+        ItemMeta hMeta = hiddenGoalItem.getItemMeta();
+        ItemMeta fMeta = finishedGoalItem.getItemMeta();
+
+        // Configure Hidden and Finished Goal Items
+        if (hMeta != null) {
+            hMeta.setDisplayName(getColor("&7Hidden Goal"));
+            hMeta.setLore(List.of(getColor("&fFinish the current task to unlock me")));
+            hiddenGoalItem.setItemMeta(hMeta);
+        }
+        if (fMeta != null) {
+            fMeta.setDisplayName(getColor("&aCompleted Goal"));
+            finishedGoalItem.setItemMeta(fMeta);
+        }
+
+        Map<Integer, GoalManager> goals = cg.getGoalManager();
+        int slot = 0;
+
+        for (int i = 0; i < goals.size(); i++) {
+            GoalManager goal = goals.get(i);
+            if (goal == null) continue;
+
+            if (goal.isDone()) {
+                gui.setItem(slot, finishedGoalItem);
+            } else {
+                if (gMeta != null) {
+                    gMeta.setDisplayName(getColor("&9Current Goal&7: &a" + goal.getName()));
+                    gMeta.setLore(List.of(
+                            getColor("&9Remaining&7: &f" + (goal.getType() == GoalTypes.CURRENCY ? String.format(cg.getSymbol(), goal.getRemaining()) : String.valueOf(goal.getRemaining())) + "&7 / &f" + (goal.getType() == GoalTypes.CURRENCY ? String.format(cg.getSymbol(), goal.getMax()) : String.valueOf(goal.getMax()))),
+                            getColor(getProgressBar(goal.getCurrent(), goal.getMax(),
+                                    cg.getConfig().getString("goal.symbol"),
+                                    cg.getConfig().getInt("goal.symbol_amount"),
+                                    cg.getConfig().getString("goal.color_of_achieved"),
+                                    cg.getConfig().getString("goal.color_of_remaining")) + " &7[&f" + getPercentage(goal.getCurrent(), goal.getMax()) + "&7]")
+                    ));
+                    goalItem.setItemMeta(gMeta);
+                }
+                gui.setItem(slot, goalItem); // Display current goal
+                slot++;
+
+                // Show the next hidden goal if it exists
+                if (i + 1 < goals.size()) {
+                    gui.setItem(slot, hiddenGoalItem);
+                }
+                break;
+            }
+            slot++;
+        }
+
+        // Open the GUI for the player
+        player.openInventory(gui);
     }
 
     private void handleDeposit(Player player, String[] args) {
@@ -98,11 +168,17 @@ public class Goal implements CommandExecutor {
         cg.withdraw(player, amount);
 
         player.sendMessage(getColor(cg.getConfig().getString("goal.messages.others.paid")
-                .replace("%amount%", String.format("%,d", amount))
+                .replace("%amount%", String.format(cg.getSymbol(), amount))
                 .replace("%name%", goal.getName())));
 
         if (goal.isDone()) {
-            goal.getCommands().forEach(cmd -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd));
+            for(String command : goal.getCommands()){
+                if(command.equalsIgnoreCase("none"))
+                    continue;
+
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+            }
+
             GoalManager nextGoal = getCurrentGoal(cg.getGoalManager());
             Bukkit.broadcastMessage(getColor(cg.getConfig().getString("goal.messages.broadcast.goal_finished")
                     .replace("%goal%", goal.getName())

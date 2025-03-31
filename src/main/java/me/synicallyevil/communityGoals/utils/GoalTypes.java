@@ -1,9 +1,10 @@
 package me.synicallyevil.communityGoals.utils;
 
 public enum GoalTypes {
-    CURRENCY("currency"),
-    VILLAGER_TRADE("villager_trade"),
-    REPAIR_GOLEMS("repair_golems");
+    CURRENCY("CURRENCY"),
+    VILLAGER_TRADE("VILLAGER_TRADE"),
+    REPAIR_GOLEMS("REPAIR_GOLEMS"),
+    ORE_MINING("ORE_MINING");
 
     private final String type;
 

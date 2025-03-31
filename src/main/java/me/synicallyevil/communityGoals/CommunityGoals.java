@@ -113,6 +113,22 @@ public final class CommunityGoals extends JavaPlugin {
         }
     }
 
+    public void deposit(Player player, double amount) {
+        if (coinEngineEnabled) {
+            CoinsEngineAPI.addBalance(player, currency, amount);
+        } else {
+            economy.depositPlayer(player, amount);
+        }
+    }
+
+    public String getSymbol() {
+        if (coinEngineEnabled) {
+            return "%,d " + currency.getSymbol();
+        }
+
+        return "$%,d";
+    }
+
     public double getBalance(Player player) {
         return coinEngineEnabled ? CoinsEngineAPI.getBalance(player, currency) : economy.getBalance(player);
     }
