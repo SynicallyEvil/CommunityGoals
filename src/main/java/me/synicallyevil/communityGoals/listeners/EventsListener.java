@@ -6,6 +6,7 @@ import me.synicallyevil.communityGoals.utils.GoalTypes;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -18,6 +19,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.EnumSet;
+import java.util.Map;
 import java.util.Random;
 
 import static me.synicallyevil.communityGoals.utils.Utils.getColor;
@@ -27,15 +29,26 @@ public class EventsListener implements Listener {
 
     private final CommunityGoals cg;
     private final Random random = new Random();
-    private static final EnumSet<Material> ORES = EnumSet.of(
-            Material.COAL_ORE, Material.DEEPSLATE_COAL_ORE,
-            Material.IRON_ORE, Material.DEEPSLATE_IRON_ORE,
-            Material.COPPER_ORE, Material.DEEPSLATE_COPPER_ORE,
-            Material.GOLD_ORE, Material.DEEPSLATE_GOLD_ORE,
-            Material.REDSTONE_ORE, Material.DEEPSLATE_REDSTONE_ORE,
-            Material.LAPIS_ORE, Material.DEEPSLATE_LAPIS_ORE,
-            Material.EMERALD_ORE, Material.DEEPSLATE_EMERALD_ORE,
-            Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE
+    // Define Ore Tiers
+    private final Map<Material, Integer> ORE_TIERS = Map.ofEntries(
+            Map.entry(Material.COAL_ORE, 1),
+            Map.entry(Material.DEEPSLATE_COAL_ORE, 1),
+            Map.entry(Material.IRON_ORE, 1),
+            Map.entry(Material.DEEPSLATE_IRON_ORE, 1),
+            Map.entry(Material.COPPER_ORE, 1),
+            Map.entry(Material.DEEPSLATE_COPPER_ORE, 1),
+
+            Map.entry(Material.GOLD_ORE, 2),
+            Map.entry(Material.DEEPSLATE_GOLD_ORE, 2),
+            Map.entry(Material.REDSTONE_ORE, 2),
+            Map.entry(Material.DEEPSLATE_REDSTONE_ORE, 2),
+            Map.entry(Material.LAPIS_ORE, 2),
+            Map.entry(Material.DEEPSLATE_LAPIS_ORE, 2),
+
+            Map.entry(Material.DIAMOND_ORE, 3),
+            Map.entry(Material.DEEPSLATE_DIAMOND_ORE, 3),
+            Map.entry(Material.EMERALD_ORE, 3),
+            Map.entry(Material.DEEPSLATE_EMERALD_ORE, 3)
     );
 
     public EventsListener(CommunityGoals cg){
@@ -71,7 +84,6 @@ public class EventsListener implements Listener {
         double initialHealth = golem.getHealth();
         double maxHealth = golem.getAttribute(Attribute.MAX_HEALTH).getValue();
 
-
         if (initialHealth < maxHealth) {
             Bukkit.getScheduler().runTaskLater(cg, () -> {
                 if (golem.getHealth() > initialHealth) {
@@ -87,10 +99,18 @@ public class EventsListener implements Listener {
         Material blockType = event.getBlock().getType();
 
         // Check if the block is an ore
-        if (ORES.contains(blockType)) {
+        if (ORE_TIERS.containsKey(blockType)) {
+            // Check if the player is using a Silk Touch tool
+            ItemStack tool = player.getInventory().getItemInMainHand();
+            if (tool != null && tool.hasItemMeta() && tool.getItemMeta().hasEnchant(Enchantment.SILK_TOUCH)) {
+                return; // Cancel if Silk Touch is detected
+            }
+
+            int tier = ORE_TIERS.get(blockType);
+
             if(cg.getConfig().getBoolean("goal.give_currency_on_ore_break")){
-                int amount = getWeightedRandom();
-                cg.deposit(player, amount);
+                //int amount = getWeightedRandom();
+                cg.deposit(player, tier);
             }
 
             addToGoal(GoalTypes.ORE_MINING);
@@ -122,10 +142,8 @@ public class EventsListener implements Listener {
     private int getWeightedRandom() {
         int roll = random.nextInt(100); // Generate a number between 0-99
 
-        if (roll < 40) return 1; // 40% chance
-        if (roll < 70) return 2; // 30% chance
-        if (roll < 90) return 3; // 20% chance
-        if (roll < 97) return 4; // 7% chance
-        return 5;               // 3% chance
+        if (roll < 90) return 1; // 90% chance
+        if (roll < 97) return 2; // 7% chance
+        return 3;                // 3% chance
     }
 }
