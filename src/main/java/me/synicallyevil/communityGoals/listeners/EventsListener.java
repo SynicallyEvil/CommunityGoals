@@ -56,11 +56,64 @@ public class EventsListener implements Listener {
     }
 
     @EventHandler
-    public void onVillagerTrade(InventoryClickEvent event) {
-        if (event.getView().getTitle().equals(getColor("&bGoal Information"))) {
+    public void onInventoryClick(InventoryClickEvent event) {
+        Player player = (Player)event.getWhoClicked();
+        String title = event.getView().getTitle();
+
+        if (title.equals(getColor("&bGoal Information"))) {
             event.setCancelled(true);
+            ItemStack clickedItem = event.getCurrentItem();
+            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+
+            GoalManager goal = getCurrentGoal(cg.getGoalManager());
+            if (goal != null && goal.getType() == GoalTypes.CURRENCY && clickedItem.getType() == Material.NETHER_STAR) {
+                cg.openDepositGui(player, goal);
+            }
         }
 
+        if (title.equals(getColor("&bDeposit Currency"))) {
+            event.setCancelled(true);
+            GoalManager goal = getCurrentGoal(cg.getGoalManager());
+            ItemStack clickedItem = event.getCurrentItem();
+            if (clickedItem == null || clickedItem.getType() != Material.EMERALD || event.getSlot() == -1) return;
+
+            String name = clickedItem.getItemMeta().getDisplayName();
+            int[] amounts = {10, 25, 50, 100, 500, 1000, 2500, 5000, 10000};
+            int amount = amounts[event.getSlot()];
+
+            double balance = cg.getBalance(player);
+
+            if (balance < amount) {
+                player.sendMessage(getColor(cg.getConfig().getString("goal.messages.others.not_enough_money")));
+                return;
+            }
+
+            amount = Math.min(amount, goal.getRemaining());
+            goal.addAmount(amount);
+            cg.withdraw(player, amount);
+
+            player.sendMessage(getColor(cg.getConfig().getString("goal.messages.others.paid")
+                    .replace("%amount%", String.format(cg.getSymbol(), amount))
+                    .replace("%name%", goal.getName())));
+
+            player.closeInventory();
+
+            if (goal.isDone()) {
+                for(String command : goal.getCommands()){
+                    if(command.equalsIgnoreCase("none"))
+                        continue;
+
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                }
+
+                GoalManager nextGoal = getCurrentGoal(cg.getGoalManager());
+                Bukkit.broadcastMessage(getColor(cg.getConfig().getString("goal.messages.broadcast.goal_finished")
+                        .replace("%goal%", goal.getName())
+                        .replace("%next_goal%", nextGoal == null ? "NONE" : nextGoal.getName())));
+            }
+        }
+
+        // Villager trade stuff.
         if (!(event.getInventory().getHolder() instanceof Villager)) return;
         if (!(event.getWhoClicked() instanceof Player)) return;
 

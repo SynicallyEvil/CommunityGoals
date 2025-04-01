@@ -1,7 +1,7 @@
 goal:
   coinsengine:
     enabled: true
-    currency: 'tokens'
+    currency: 'money'
   use_gui_for_goals: true
   give_currency_on_ore_break: true
   symbol: '|'

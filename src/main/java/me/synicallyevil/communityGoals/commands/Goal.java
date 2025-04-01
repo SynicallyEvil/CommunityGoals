@@ -138,6 +138,8 @@ public class Goal implements CommandExecutor {
         player.openInventory(gui);
     }
 
+
+
     private void handleDeposit(Player player, String[] args) {
         if (args.length < 2 || !isNumber(args[1])) {
             displayHelp(player);

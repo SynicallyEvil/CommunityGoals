@@ -6,13 +6,19 @@ import me.synicallyevil.communityGoals.managers.GoalManager;
 import me.synicallyevil.communityGoals.utils.Utils;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import su.nightexpress.coinsengine.api.CoinsEngineAPI;
 import su.nightexpress.coinsengine.api.currency.Currency;
 
 import java.util.*;
+
+import static me.synicallyevil.communityGoals.utils.Utils.getColor;
 
 public final class CommunityGoals extends JavaPlugin {
 
@@ -140,4 +146,24 @@ public final class CommunityGoals extends JavaPlugin {
     public Map<Integer, GoalManager> getGoalManager() {
         return goalManager;
     }
+
+    public void openDepositGui(Player player, GoalManager goal) {
+        Inventory depositGui = Bukkit.createInventory(null, 9, getColor("&bDeposit Currency"));
+
+        // Add deposit options (10, 50, 100, 500, 1000)
+        int[] amounts = {10, 25, 50, 100, 500, 1000, 2500, 5000, 10000};
+        for (int i = 0; i < amounts.length; i++) {
+            ItemStack item = new ItemStack(Material.EMERALD);
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null) {
+                meta.setDisplayName(getColor("&9Deposit &f" + String.format(getSymbol(), amounts[i])));
+                meta.setLore(List.of(getColor("&7Click to deposit &f" + String.format(getSymbol(), amounts[i])), getColor("&7towards the current goal!")));
+                item.setItemMeta(meta);
+            }
+            depositGui.setItem(i, item);
+        }
+
+        player.openInventory(depositGui);
+    }
+
 }
