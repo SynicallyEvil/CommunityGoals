@@ -36,6 +36,12 @@ goal:
       max: 15000
       console_commands:
         - 'none'
+      description:
+        - '&7Donate 15,000 tokens to the great overlords Villagers Inc.'
+        - '&7Donating may prove your worth.'
+        - ' '
+        - '&9Click to donate predefined amounts. You can also use'
+        - '&f&n/goal deposit <amount>&9.'
     1:
       name: 'Trade with 250 Villagers'
       type: 'VILLAGER_TRADE'
@@ -43,6 +49,11 @@ goal:
       max: 250
       console_commands:
         - 'none'
+      description:
+        - '&7Establish trade relations with the villagers by completing'
+        - '&7250 trades. A fair deal is always welcome.'
+        - ' '
+        - '&9Barter your way to victory and earn their trust!'
     2:
       name: 'Repair 75 Iron Golems'
       type: 'REPAIR_GOLEMS'
@@ -50,6 +61,11 @@ goal:
       max: 75
       console_commands:
         - 'none'
+      description:
+        - '&7The village protectors need your help!'
+        - '&7Repair 75 Iron Golems to keep them in fighting shape.'
+        - ' '
+        - '&9Use iron ingots to heal these noble guardians.'
     3:
       name: 'Mine 350 Ore Blocks'
       type: 'ORE_MINING'
@@ -57,3 +73,8 @@ goal:
       max: 350
       console_commands:
         - 'none'
+      description:
+        - '&7The mines await! Dig deep and mine 350 ore blocks'
+        - '&7to contribute to the community’s resource pool.'
+        - ' '
+        - '&9Only the strongest miners will prevail!'

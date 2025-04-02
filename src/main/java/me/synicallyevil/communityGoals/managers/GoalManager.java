@@ -15,14 +15,16 @@ public class GoalManager {
     private int max;
     private boolean isDone;
     private List<String> commands;
+    private List<String> description;
 
-    public GoalManager(CommunityGoals cg, String name, GoalTypes type, int number, int current, int max, List<String> commands) {
+    public GoalManager(CommunityGoals cg, String name, GoalTypes type, int number, int current, int max, List<String> commands, List<String> description) {
         this.cg = cg;
         this.name = name;
         this.type = type;
         this.number = number;
         this.max = max;
         this.commands = commands;
+        this.description = description;
         setCurrent(current);
         checkDone();
     }
@@ -81,6 +83,10 @@ public class GoalManager {
         return Math.max(0, max - current);
     }
 
+    public List<String> getDescription(){
+        return description;
+    }
+
     public void reset() {
         isDone = false;
         current = 0;
@@ -112,7 +118,8 @@ public class GoalManager {
                 goal,
                 config.getInt("goal.goals." + goal + ".current", 0),
                 config.getInt("goal.goals." + goal + ".max", 10000000),
-                config.getStringList("goal.goals." + goal + ".console_commands")
+                config.getStringList("goal.goals." + goal + ".console_commands"),
+                config.getStringList("goal.goals." + goal + ".description")
         );
     }
 }

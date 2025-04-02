@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -111,15 +112,31 @@ public class Goal implements CommandExecutor {
                 gui.setItem(slot, finishedGoalItem);
             } else {
                 if (gMeta != null) {
-                    gMeta.setDisplayName(getColor("&9Current Goal&7: &a" + goal.getName()));
-                    gMeta.setLore(List.of(
-                            getColor("&9Remaining&7: &f" + (goal.getType() == GoalTypes.CURRENCY ? String.format(cg.getSymbol(), goal.getRemaining()) : String.valueOf(goal.getRemaining())) + "&7 / &f" + (goal.getType() == GoalTypes.CURRENCY ? String.format(cg.getSymbol(), goal.getMax()) : String.valueOf(goal.getMax()))),
-                            getColor(getProgressBar(goal.getCurrent(), goal.getMax(),
-                                    cg.getConfig().getString("goal.symbol"),
-                                    cg.getConfig().getInt("goal.symbol_amount"),
-                                    cg.getConfig().getString("goal.color_of_achieved"),
-                                    cg.getConfig().getString("goal.color_of_remaining")) + " &7[&f" + getPercentage(goal.getCurrent(), goal.getMax()) + "&7]")
+                    gMeta.setDisplayName(getColor("&9Goal&7: &a" + goal.getName()));
+                    List<String> lore = new ArrayList<>();
+
+                    // Add goal name and progress
+                    lore.add(getColor("&9Remaining&7: &f" +
+                            (goal.getType() == GoalTypes.CURRENCY ? String.format(cg.getSymbol(), goal.getRemaining()) : String.valueOf(goal.getRemaining())) +
+                            "&7 / &f" +
+                            (goal.getType() == GoalTypes.CURRENCY ? String.format(cg.getSymbol(), goal.getMax()) : String.valueOf(goal.getMax()))
                     ));
+
+                    lore.add(getColor(getProgressBar(goal.getCurrent(), goal.getMax(),
+                            cg.getConfig().getString("goal.symbol"),
+                            cg.getConfig().getInt("goal.symbol_amount"),
+                            cg.getConfig().getString("goal.color_of_achieved"),
+                            cg.getConfig().getString("goal.color_of_remaining")) +
+                            " &7[&f" + getPercentage(goal.getCurrent(), goal.getMax()) + "&7]"));
+                    lore.add(" ");
+
+
+                    for (String line : goal.getDescription()) {
+                        lore.add(getColor(line));
+                    }
+
+
+                    gMeta.setLore(lore);
                     goalItem.setItemMeta(gMeta);
                 }
                 gui.setItem(slot, goalItem); // Display current goal
