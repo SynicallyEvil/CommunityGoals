@@ -1,6 +1,6 @@
-package me.synicallyevil.communityGoals.utils;
+package me.synicallyevil.communityGoals.BACKUP.utils;
 
-import me.synicallyevil.communityGoals.managers.GoalManager;
+import me.synicallyevil.communityGoals.BACKUP.managers.GoalManager;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.*;

@@ -1,8 +1,8 @@
-package me.synicallyevil.communityGoals.listeners;
+package me.synicallyevil.communityGoals.BACKUP.listeners;
 
-import me.synicallyevil.communityGoals.CommunityGoals;
-import me.synicallyevil.communityGoals.managers.GoalManager;
-import me.synicallyevil.communityGoals.utils.GoalTypes;
+import me.synicallyevil.communityGoals.BACKUP.CommunityGoals;
+import me.synicallyevil.communityGoals.BACKUP.managers.GoalManager;
+import me.synicallyevil.communityGoals.BACKUP.utils.GoalTypes;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -18,12 +18,11 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.EnumSet;
 import java.util.Map;
 import java.util.Random;
 
-import static me.synicallyevil.communityGoals.utils.Utils.getColor;
-import static me.synicallyevil.communityGoals.utils.Utils.getCurrentGoal;
+import static me.synicallyevil.communityGoals.BACKUP.utils.Utils.getColor;
+import static me.synicallyevil.communityGoals.BACKUP.utils.Utils.getCurrentGoal;
 
 public class EventsListener implements Listener {
 
