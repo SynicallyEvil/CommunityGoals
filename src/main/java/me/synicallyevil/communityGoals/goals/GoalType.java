@@ -23,7 +23,7 @@ public enum GoalType {
     ADVANCEMENT_COMPLETE,
     CHAT_MESSAGE,
     TIME_PLAYED,
-    CUSTOM_EVENT, // catch-all for special plugin-triggered goals
+    CUSTOM_EVENT,
     MONEY_SPENT,
     MONEY_EARNED
 }

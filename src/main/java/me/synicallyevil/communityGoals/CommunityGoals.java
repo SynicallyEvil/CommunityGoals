@@ -48,6 +48,6 @@ public class CommunityGoals extends JavaPlugin {
 
     public void reloadGoals() {
         goalsManager.loadGoals(); // clears and loads again
-        getLogger().info("[CommunityGoals] Goals reloaded from goals.yml.");
+        getLogger().info("Goals reloaded from goals.yml.");
     }
 }
