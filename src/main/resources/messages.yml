@@ -1,0 +1,3 @@
+complete: "&aGoal %goal% complete!"
+progress: "&7%progress%/%amount% toward %goal%"
+expired: "&cGoal %goal% has expired."

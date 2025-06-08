@@ -1,0 +1,26 @@
+goal_mode: MULTI
+active_goals:
+  - rank_kit
+  - kit_keys
+
+goals:
+  rank_kit:
+    display: "&bRank Kit Gear"
+    description: "Reach the goal to unlock rank kits."
+    type: BLOCK_BREAK
+    amount: 1000
+    blocks:
+      - DIAMOND_BLOCK
+    tools:
+      - NETHERITE_PICKAXE
+    expires_at: 1725670400
+
+  kit_keys:
+    display: "&eKit Keys"
+    description: "Place blocks to unlock keys."
+    type: BLOCK_PLACE
+    amount: 2000
+    blocks:
+      - CHEST
+    worlds:
+      - world

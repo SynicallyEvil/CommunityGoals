@@ -1,4 +1,4 @@
-package me.synicallyevil.communityGoals.commands;
+package me.synicallyevil.communityGoals.commands.registry;
 
 import org.bukkit.command.CommandSender;
 

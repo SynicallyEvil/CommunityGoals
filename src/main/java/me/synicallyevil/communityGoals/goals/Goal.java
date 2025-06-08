@@ -1,62 +1,59 @@
 package me.synicallyevil.communityGoals.goals;
 
+import me.synicallyevil.communityGoals.goals.enums.GoalType;
+
+import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 
 public class Goal {
-
-    private final int id;
-    private final String name;
+    private final String id;
+    private final String display;
+    private final String description;
     private final GoalType type;
-    private final int max;
-    private final List<String> completionCommands;
+    private final int amount;
+    private int progress;
+    private final List<String> worlds;
+    private final List<String> entities;
+    private final List<String> blocks;
+    private final List<String> tools;
+    private final Instant expiresAt;
 
-    private int current;
-
-    public Goal(int id, String name, int current, int max, GoalType type, List<String> completionCommands) {
+    public Goal(String id, String display, String description, GoalType type, int amount,
+                List<String> worlds, List<String> entities, List<String> blocks, List<String> tools, Instant expiresAt) {
         this.id = id;
-        this.name = name;
-        this.current = current;
-        this.max = max;
+        this.display = display;
+        this.description = description;
         this.type = type;
-        this.completionCommands = completionCommands;
+        this.amount = amount;
+        this.worlds = worlds != null ? worlds : Collections.emptyList();
+        this.entities = entities != null ? entities : Collections.emptyList();
+        this.blocks = blocks != null ? blocks : Collections.emptyList();
+        this.tools = tools != null ? tools : Collections.emptyList();
+        this.expiresAt = expiresAt;
     }
 
-    public int getId() {
-        return id;
+    public boolean isExpired() {
+        return expiresAt != null && Instant.now().isAfter(expiresAt);
     }
 
-    public String getName() {
-        return name;
+    public void addProgress(int value) {
+        progress = Math.min(progress + value, amount);
     }
 
-    public int getCurrent() {
-        return current;
+    public boolean isComplete() {
+        return progress >= amount;
     }
 
-    public int getMax() {
-        return max;
-    }
-
-    public GoalType getType() {
-        return type;
-    }
-
-    public boolean isCompleted() {
-        return current >= max;
-    }
-
-    public void increment(int amount) {
-        if (!isCompleted()) {
-            current += amount;
-            if (current > max) current = max;
-        }
-    }
-
-    public void reset() {
-        this.current = 0;
-    }
-
-    public List<String> getCompletionCommands() {
-        return completionCommands;
-    }
+    public String getId() { return id; }
+    public String getDisplay() { return display; }
+    public String getDescription() { return description; }
+    public GoalType getType() { return type; }
+    public int getAmount() { return amount; }
+    public int getProgress() { return progress; }
+    public List<String> getWorlds() { return worlds; }
+    public List<String> getEntities() { return entities; }
+    public List<String> getBlocks() { return blocks; }
+    public List<String> getTools() { return tools; }
+    public Instant getExpiresAt() { return expiresAt; }
 }

@@ -1,6 +1,7 @@
-package me.synicallyevil.communityGoals.commands;
+package me.synicallyevil.communityGoals.commands.subcommands;
 
 import me.synicallyevil.communityGoals.CommunityGoals;
+import me.synicallyevil.communityGoals.commands.registry.CommandInterface;
 import me.synicallyevil.communityGoals.goals.GoalsManager;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -12,9 +13,9 @@ public class GoalReload implements CommandInterface {
     private final CommunityGoals plugin;
     private final GoalsManager goalsManager;
 
-    public GoalReload(CommunityGoals plugin, GoalsManager goalsManager) {
+    public GoalReload(CommunityGoals plugin) {
         this.plugin = plugin;
-        this.goalsManager = goalsManager;
+        this.goalsManager = plugin.getGoalsManager();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package me.synicallyevil.communityGoals.goals;
+package me.synicallyevil.communityGoals.goals.enums;
 
 public enum GoalType {
     BLOCK_BREAK,

@@ -1,6 +1,6 @@
 name: CommunityGoals
 version: '1.0'
-main: me.synicallyevil.communityGoals.BACKUP.CommunityGoals
+main: me.synicallyevil.communityGoals.CommunityGoals
 api-version: '1.20'
 prefix: CommunityGoals
 author: SynicallyEvil
@@ -9,5 +9,5 @@ softdepend: [Vault, CoinsEngine]
 
 commands:
   goal:
-    description: Fund a goal with a specified amount.
+    description: Fund a goal together!
     aliases: [goals]
