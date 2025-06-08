@@ -177,12 +177,14 @@ public class Goal implements CommandExecutor {
         int amount = Integer.parseInt(args[1]);
         double balance = cg.getBalance(player);
 
+        if(goal.getRemaining() < amount)
+            amount = Math.min(amount, goal.getRemaining());
+
         if (balance < amount) {
             player.sendMessage(getColor(cg.getConfig().getString("goal.messages.others.not_enough_money")));
             return;
         }
 
-        amount = Math.min(amount, goal.getRemaining());
         goal.addAmount(amount);
         cg.withdraw(player, amount);
 

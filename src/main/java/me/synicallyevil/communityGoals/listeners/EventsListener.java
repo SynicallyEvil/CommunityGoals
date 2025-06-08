@@ -191,12 +191,4 @@ public class EventsListener implements Listener {
                     .replace("%next_goal%", nextGoal == null ? "NONE" : nextGoal.getName())));
         }
     }
-
-    private int getWeightedRandom() {
-        int roll = random.nextInt(100); // Generate a number between 0-99
-
-        if (roll < 90) return 1; // 90% chance
-        if (roll < 97) return 2; // 7% chance
-        return 3;                // 3% chance
-    }
 }
