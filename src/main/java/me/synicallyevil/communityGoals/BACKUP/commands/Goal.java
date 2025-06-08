@@ -1,8 +1,8 @@
-package me.synicallyevil.communityGoals.commands;
+package me.synicallyevil.communityGoals.BACKUP.commands;
 
-import me.synicallyevil.communityGoals.CommunityGoals;
-import me.synicallyevil.communityGoals.managers.GoalManager;
-import me.synicallyevil.communityGoals.utils.GoalTypes;
+import me.synicallyevil.communityGoals.BACKUP.CommunityGoals;
+import me.synicallyevil.communityGoals.BACKUP.managers.GoalManager;
+import me.synicallyevil.communityGoals.BACKUP.utils.GoalTypes;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static me.synicallyevil.communityGoals.utils.Utils.*;
+import static me.synicallyevil.communityGoals.BACKUP.utils.Utils.*;
 
 public class Goal implements CommandExecutor {
 

@@ -1,4 +1,4 @@
-package me.synicallyevil.communityGoals.utils;
+package me.synicallyevil.communityGoals.BACKUP.utils;
 
 public enum GoalTypes {
     CURRENCY("CURRENCY"),

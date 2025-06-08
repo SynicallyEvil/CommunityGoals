@@ -1,7 +1,7 @@
-package me.synicallyevil.communityGoals.managers;
+package me.synicallyevil.communityGoals.BACKUP.managers;
 
-import me.synicallyevil.communityGoals.CommunityGoals;
-import me.synicallyevil.communityGoals.utils.GoalTypes;
+import me.synicallyevil.communityGoals.BACKUP.CommunityGoals;
+import me.synicallyevil.communityGoals.BACKUP.utils.GoalTypes;
 
 import java.util.List;
 
