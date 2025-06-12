@@ -56,4 +56,7 @@ public class Goal {
     public List<String> getBlocks() { return blocks; }
     public List<String> getTools() { return tools; }
     public Instant getExpiresAt() { return expiresAt; }
+    public boolean isTimed() {
+        return expiresAt != null;
+    }
 }

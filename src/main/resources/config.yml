@@ -1,0 +1,50 @@
+gui:
+  title: "&aGoals Overview"
+  rows: 6
+
+  filler:
+    material: GRAY_STAINED_GLASS_PANE
+    name: " "
+
+  layout:
+    start-slot: 10
+    per-row: 7
+    spacing: 1
+
+  goal_item:
+    active:
+      material: BOOK
+      name: "&e%display%"
+      glow: false
+      lore:
+        - "&7Type: &f%type%"
+        - "&7Progress: &a%progress%&7/&f%amount%"
+        - "&7Time Left: &c%time_left%"
+        - "&8&m-------------------"
+        - "&f%description%"
+    completed:
+      material: EMERALD
+      name: "&a✔ %display%"
+      glow: true
+      lore:
+        - "&7Type: &f%type%"
+        - "&aCOMPLETED!"
+        - "&8&m-------------------"
+        - "&f%description%"
+    expired:
+      material: BARRIER
+      name: "&c✖ %display%"
+      glow: false
+      lore:
+        - "&7Type: &f%type%"
+        - "&cExpired!"
+        - "&8&m-------------------"
+        - "&f%description%"
+
+  filter_button:
+    material: COMPARATOR
+    name: "&bFilter: &f%current_filter%"
+    slot: 49
+    lore:
+      - "&7Click to cycle through filters"
+      - "&7Currently: &e%current_filter%"

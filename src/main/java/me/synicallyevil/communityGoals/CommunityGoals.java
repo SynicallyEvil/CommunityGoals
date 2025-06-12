@@ -2,6 +2,7 @@ package me.synicallyevil.communityGoals;
 
 import me.synicallyevil.communityGoals.commands.registry.CommandManager;
 import me.synicallyevil.communityGoals.goals.GoalsManager;
+import me.synicallyevil.communityGoals.gui.GoalsGUI;
 import me.synicallyevil.communityGoals.listeners.PlayerEvents;
 import me.synicallyevil.communityGoals.metrics.Metrics;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -14,6 +15,7 @@ public class CommunityGoals extends JavaPlugin {
 
     private CommandManager commandManager;
     private GoalsManager goalsManager;
+    private GoalsGUI gui;
 
     private FileConfiguration goalsConfig;
     private FileConfiguration messagesConfig;
@@ -30,7 +32,7 @@ public class CommunityGoals extends JavaPlugin {
         getCommand("goal").setExecutor(commandManager);
 
         goalsManager = new GoalsManager(this);
-
+        gui = new GoalsGUI(this);
         //this.metrics = new Metrics(this, 25392);
         //metrics.addCustomChart(new Metrics.)
 
@@ -74,5 +76,9 @@ public class CommunityGoals extends JavaPlugin {
 
     public GoalsManager getGoalsManager() {
         return goalsManager;
+    }
+
+    public GoalsGUI getGui() {
+        return gui;
     }
 }

@@ -5,6 +5,7 @@ import me.synicallyevil.communityGoals.commands.registry.CommandInterface;
 import me.synicallyevil.communityGoals.goals.GoalsManager;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -35,8 +36,9 @@ public class GoalReload implements CommandInterface {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        goalsManager.loadGoals();
-        plugin.reloadConfig();
+        //goalsManager.loadGoals();
+        //plugin.reloadConfig();
+        plugin.getGui().open((Player) sender);
         sender.sendMessage(ChatColor.GREEN + "Goals reloaded from file.");
         return true;
     }

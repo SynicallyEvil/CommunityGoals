@@ -1,29 +1,38 @@
 package me.synicallyevil.communityGoals.goals.enums;
 
 public enum GoalType {
-    BLOCK_BREAK,
-    BLOCK_PLACE,
-    MOB_KILL,
-    PLAYER_KILL,
-    IRON_GOLEM_REPAIR,
-    VILLAGER_TRADE,
-    ITEM_CRAFT,
-    ITEM_SMELT,
-    FISH_CAUGHT,
-    DISTANCE_TRAVELED,
-    POTION_BREW,
-    ITEM_ENCHANT,
-    ANIMAL_BREED,
-    CROP_HARVEST,
-    EXPERIENCE_GAINED,
-    DAMAGE_DEALT,
-    DAMAGE_TAKEN,
-    STRUCTURE_DISCOVERY,
-    RAID_WIN,
-    ADVANCEMENT_COMPLETE,
-    CHAT_MESSAGE,
-    TIME_PLAYED,
-    CUSTOM_EVENT,
-    MONEY_SPENT,
-    MONEY_EARNED
+    BLOCK_BREAK("Block Break"),
+    BLOCK_PLACE("Block Place"),
+    MOB_KILL("Mob Kill"),
+    PLAYER_KILL("Player Kill"),
+    IRON_GOLEM_REPAIR("Iron Golem Repair"),
+    VILLAGER_TRADE("Villager Trade"),
+    ITEM_CRAFT("Item Craft"),
+    ITEM_SMELT("Item Smelt"),
+    FISH_CAUGHT("Fish Caught"),
+    DISTANCE_TRAVELED("Distance Traveled"),
+    POTION_BREW("Potion Brew"),
+    ITEM_ENCHANT("Item Enchant"),
+    ANIMAL_BREED("Animal Breed"),
+    CROP_HARVEST("Crop Harvest"),
+    EXPERIENCE_GAINED("Experience Gained"),
+    DAMAGE_DEALT("Damage Dealt"),
+    DAMAGE_TAKEN("Damage Taken"),
+    RAID_WIN("Raid Win"),
+    ADVANCEMENT_COMPLETE("Advancement Complete"),
+    CHAT_MESSAGE("Chat Message"),
+    TIME_PLAYED("Time Played"),
+    CUSTOM_EVENT("Custom Event"),
+    MONEY_SPENT("Money Spent"),
+    MONEY_EARNED("Money Earned");
+
+    private final String displayName;
+
+    GoalType(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
 }
