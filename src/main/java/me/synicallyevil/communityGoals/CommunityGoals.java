@@ -3,6 +3,9 @@ package me.synicallyevil.communityGoals;
 import me.synicallyevil.communityGoals.commands.registry.CommandManager;
 import me.synicallyevil.communityGoals.goals.GoalsManager;
 import me.synicallyevil.communityGoals.gui.GoalsGUI;
+import me.synicallyevil.communityGoals.listeners.BlockEvents;
+import me.synicallyevil.communityGoals.listeners.EntityEvents;
+import me.synicallyevil.communityGoals.listeners.ItemEvents;
 import me.synicallyevil.communityGoals.listeners.PlayerEvents;
 import me.synicallyevil.communityGoals.metrics.Metrics;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -33,19 +36,24 @@ public class CommunityGoals extends JavaPlugin {
 
         goalsManager = new GoalsManager(this);
         gui = new GoalsGUI(this);
-        //this.metrics = new Metrics(this, 25392);
+        this.metrics = new Metrics(this, 25392);
         //metrics.addCustomChart(new Metrics.)
 
         goalsConfig = getGoalsConfig();
         messagesConfig = getMessagesConfig();
 
         getServer().getPluginManager().registerEvents(new PlayerEvents(this), this);
+        getServer().getPluginManager().registerEvents(new BlockEvents(this), this);
+        getServer().getPluginManager().registerEvents(new EntityEvents(this), this);
+        getServer().getPluginManager().registerEvents(new ItemEvents(this), this);
+
     }
 
     @Override
     public void onDisable() {
-        // Save the current goals to the file on disable
-        //this.metrics.shutdown();
+        if(this.metrics != null) {
+            this.metrics.shutdown();
+        }
     }
 
     public FileConfiguration getGoalsConfig() {
