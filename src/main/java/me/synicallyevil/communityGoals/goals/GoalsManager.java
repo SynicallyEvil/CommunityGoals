@@ -3,11 +3,8 @@ package me.synicallyevil.communityGoals.goals;
 import me.synicallyevil.communityGoals.CommunityGoals;
 import me.synicallyevil.communityGoals.goals.enums.GoalMode;
 import me.synicallyevil.communityGoals.goals.enums.GoalType;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -19,7 +16,8 @@ public class GoalsManager {
     private final CommunityGoals plugin;
     private final Map<String, Goal> allGoals = new HashMap<>();
     private final List<Goal> activeGoals = new ArrayList<>();
-    private final Map<UUID, Long> onlineSince = new HashMap<>();
+
+    private final boolean cancelTask = false;
 
     private GoalMode goalMode;
 
@@ -27,6 +25,7 @@ public class GoalsManager {
         this.plugin = plugin;
         loadGoals();
         scheduleTickTask();
+        saveAllProgress();
     }
 
     public void reloadGoals(){
@@ -64,6 +63,7 @@ public class GoalsManager {
                     goalSec.getString("permission"),
                     type,
                     goalSec.getInt("amount"),
+                    goalSec.getInt("progress", 0),
                     goalSec.getStringList("worlds"),
                     goalSec.getStringList("entities"),
                     goalSec.getStringList("blocks"),
@@ -92,6 +92,11 @@ public class GoalsManager {
     public void scheduleTickTask() {
         new BukkitRunnable() {
             public void run() {
+                if(cancelTask) {
+                    this.cancel();
+                    return;
+                }
+
                 tick();
             }
         }.runTaskTimer(plugin, 20L, 20L);
@@ -107,71 +112,93 @@ public class GoalsManager {
                 continue;
             }
 
-            for(UUID uuid : onlineSince.keySet()) {
-                if (goal.getType() == GoalType.TIME_PLAYED) {
-                    long millis = System.currentTimeMillis() - onlineSince.get(uuid);
-                    handleGoalProgress(goal, (int) (millis / 1000L));
-                }
+            if(goal.getType() == GoalType.TIME_PLAYED) {
+                plugin.getServer().getOnlinePlayers().forEach(p -> {
+                    if(checkRequirements(goal, p, p.getWorld().getName(), null, null))
+                        handleGoalProgress(goal, 1);
+                });
             }
         }
     }
 
-    public boolean checkRequirements(Goal goal, @Nullable Player player, @Nullable String world, @Nullable String target, @Nullable String tool) {
-        // Check world restrictions
-        if (!goal.getWorlds().isEmpty()) {
-            if (world == null) return false;
-            if (!goal.getWorlds().contains(world)) return false;
-        }
+    private void saveAllProgress(){
+        new BukkitRunnable() {
+            public void run() {
+                FileConfiguration config = plugin.getGoalsConfig();
+                List<String> goalIds = new ArrayList<>();
 
-        // Check block/entity/item/tool restrictions depending on GoalType
-        switch (goal.getType()) {
-            case MOB_KILL:
-            case PLAYER_KILL:
-            case PLAYER_DEATH:
-            case ANIMAL_BREED:
-                if (!goal.getEntities().isEmpty()) {
-                    if (target == null || !goal.getEntities().contains(target)) return false;
+                for (Goal goal : activeGoals) {
+                    goalIds.add(goal.getId());
+                    config.set("goals." + goal.getId() + ".progress", goal.getProgress());
                 }
-                break;
 
-            case BLOCK_BREAK:
-            case BLOCK_PLACE:
-            case CROP_HARVEST:
-                if (!goal.getBlocks().isEmpty()) {
-                    if (target == null || !goal.getBlocks().contains(target)) return false;
-                }
-                if (!goal.getTools().isEmpty()) {
-                    if (tool == null || !goal.getTools().contains(tool)) return false;
-                }
-                break;
-
-            case ITEM_CRAFT:
-            case ITEM_SMELT:
-            case ITEM_ENCHANT:
-            case POTION_BREW:
-                if (!goal.getBlocks().isEmpty() && (target == null || !goal.getBlocks().contains(target))) return false;
-                break;
-
-            case DAMAGE_DEALT:
-            case DAMAGE_TAKEN:
-                if (!goal.getTools().isEmpty() && (tool == null || !goal.getTools().contains(tool))) return false;
-                break;
-
-            default:
-                break;
-        }
-
-        // Future permission-based checks or per-player exclusions
-        if (player != null) {
-            // Example: Check if player has permission "communitygoals.participate"
-            // if (!player.hasPermission("communitygoals.participate")) return false;
-        }
-
-        return true;
+                config.set("active_goals", goalIds);
+                plugin.saveGoalsConfig();
+            }
+        }.runTaskTimerAsynchronously(plugin, 0L, 6000L);
     }
 
-    private boolean isEntityBased(GoalType type) {
-        return type == GoalType.MOB_KILL || type == GoalType.PLAYER_KILL || type == GoalType.ANIMAL_BREED;
+    public boolean checkRequirements(Goal goal, @Nullable Player player, @Nullable String world, @Nullable String target, @Nullable String tool) {
+        return checkWorld(goal, world) &&
+               checkEntity(goal, target) &&
+               checkBlock(goal, target) &&
+               checkTool(goal, tool) &&
+               checkItem(goal, target) &&
+               checkPermission(goal, player);
+    }
+
+    private boolean checkWorld(Goal goal, @Nullable String world) {
+        plugin.getLogger().info("Checking world for goal " + goal.getId() + ": " + (world != null ? world : "null"));
+
+        if (goal.getWorlds().isEmpty())
+            return true;
+
+        return world != null && goal.getWorlds().contains(world);
+    }
+
+    private boolean checkEntity(Goal goal, @Nullable String target) {
+        plugin.getLogger().info("Checking entity for goal " + goal.getId() + ": " + (target != null ? target : "null"));
+
+        if (goal.getEntities().isEmpty())
+            return true;
+
+        return target != null && goal.getEntities().contains(target);
+    }
+
+    private boolean checkBlock(Goal goal, @Nullable String target) {
+        plugin.getLogger().info("Checking block for goal " + goal.getId() + ": " + (target != null ? target : "null"));
+
+        if (goal.getBlocks().isEmpty())
+            return true;
+
+        return target != null && goal.getBlocks().contains(target);
+    }
+
+    private boolean checkTool(Goal goal, @Nullable String tool) {
+        plugin.getLogger().info("Checking tool for goal " + goal.getId() + ": " + (tool != null ? tool : "null"));
+
+        if (goal.getTools().isEmpty())
+            return true;
+
+        return tool != null && goal.getTools().contains(tool);
+    }
+
+    private boolean checkItem(Goal goal, @Nullable String item) {
+        plugin.getLogger().info("Checking item for goal " + goal.getId() + ": " + (item != null ? item : "null"));
+
+        if (goal.getItems().isEmpty())
+            return true;
+
+        return item != null && goal.getItems().contains(item);
+    }
+
+    private boolean checkPermission(Goal goal, @Nullable Player player) {
+        plugin.getLogger().info("Checking permission for goal " + goal.getId() + ": " + (player != null ? player.getName() : "null"));
+
+        if (goal.getPermission() == null || goal.getPermission().isEmpty())
+            return true;
+
+        return player != null && player.hasPermission(goal.getPermission());
     }
 
     public void handleGoalProgress(Goal goal, int amount) {
@@ -211,7 +238,4 @@ public class GoalsManager {
         return allGoals;
     }
 
-    public Map<UUID, Long> getOnlineSince() {
-        return onlineSince;
-    }
 }

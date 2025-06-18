@@ -3,6 +3,8 @@ package me.synicallyevil.communityGoals.listeners;
 import me.synicallyevil.communityGoals.CommunityGoals;
 import me.synicallyevil.communityGoals.goals.GoalsManager;
 import me.synicallyevil.communityGoals.goals.enums.GoalType;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,11 +24,19 @@ public class BlockEvents implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
+        Block block = event.getBlock();
 
         manager.getActiveGoals().forEach(goal -> {
-            if(goal.getType() == GoalType.BLOCK_BREAK || goal.getType() == GoalType.CROP_HARVEST) {
-                if(manager.checkRequirements(goal, player, player.getWorld().getName(), event.getBlock().getType().name(), player.getInventory().getItemInMainHand().getType().name()))
+            if(goal.getType() == GoalType.BLOCK_BREAK) {
+                if(manager.checkRequirements(goal, player, player.getWorld().getName(), block.getType().name(), player.getInventory().getItemInMainHand().getType().name()))
                     manager.handleGoalProgress(goal, 1);
+            }
+
+            if(goal.getType() == GoalType.CROP_HARVEST && block.getBlockData() instanceof Ageable ageable){
+                if (ageable.getAge() >= 7) {
+                    if(manager.checkRequirements(goal, player, player.getWorld().getName(), block.getType().name(), player.getInventory().getItemInMainHand().getType().name()))
+                        manager.handleGoalProgress(goal, 1);
+                }
             }
         });
     } //public boolean checkRequirements(Goal goal, Player player, @Nullable String blockOrEntity)

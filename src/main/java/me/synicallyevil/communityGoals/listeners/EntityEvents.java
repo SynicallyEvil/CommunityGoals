@@ -6,6 +6,7 @@ import me.synicallyevil.communityGoals.goals.enums.GoalType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -26,7 +27,7 @@ public class EntityEvents implements Listener {
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
-        if (event.getEntity().getKiller() == null || !(event.getEntity() instanceof Player)) return;
+        if (event.getEntity().getKiller() == null || (event.getEntity() instanceof Player)) return;
 
         Player player = event.getEntity().getKiller();
 
@@ -98,12 +99,18 @@ public class EntityEvents implements Listener {
         if (player.getInventory().getItemInMainHand().getType() != Material.IRON_INGOT)
             return;
 
+        AttributeInstance maxHealthAttr = golem.getAttribute(Attribute.MAX_HEALTH);
+        if (maxHealthAttr == null) {
+            // Attribute not available, exit
+            return;
+        }
+        double maxHealth = maxHealthAttr.getBaseValue();
         double initialHealth = golem.getHealth();
-        double maxHealth = golem.getAttribute(Attribute.MAX_HEALTH).getValue();
 
         if (initialHealth < maxHealth) {
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                if (golem.getHealth() > initialHealth) {
+                double currentHealth = golem.getHealth();
+                if (currentHealth > initialHealth) {
                     manager.getActiveGoals().forEach(goal -> {
                         if (goal.getType() == GoalType.DAMAGE_TAKEN) {
                             if (manager.checkRequirements(goal, player, player.getWorld().getName(), null, null)) {

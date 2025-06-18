@@ -21,11 +21,12 @@ public class Goal {
     private final List<String> items;
     private final Instant expiresAt;
 
-    public Goal(String id, String display, String description, String permission, GoalType type, int amount,
+    public Goal(String id, String display, String description, String permission, GoalType type, int amount, int progress,
                 List<String> worlds, List<String> entities, List<String> blocks, List<String> tools, List<String> items, Instant expiresAt) {
         this.id = id;
         this.display = display;
         this.description = description;
+        this.progress = progress;
         this.permission = permission;
         this.type = type;
         this.amount = amount;

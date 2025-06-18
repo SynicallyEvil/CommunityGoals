@@ -9,6 +9,7 @@ goals:
     description: "Reach the goal to unlock rank kits."
     type: BLOCK_BREAK
     amount: 1000
+    progress: 0
     blocks:
       - DIAMOND_BLOCK
     tools:
@@ -20,7 +21,24 @@ goals:
     description: "Place blocks to unlock keys."
     type: BLOCK_PLACE
     amount: 2000
+    progress: 0
     blocks:
       - CHEST
     worlds:
       - world
+
+  kit_keys2:
+    display: "&eKit Keys 2"
+    description: "Craft 2,000 diamond swords to unlock the next kit."
+    type: ITEM_CRAFT
+    amount: 2000
+    progress: 0
+    items:
+      - DIAMOND_SWORD
+
+  kit_keys3:
+    display: "&eKit Keys 3"
+    description: "Join the server 2,000 times to unlock the next kit."
+    type: PLAYER_JOIN
+    amount: 2000
+    progress: 0

@@ -12,7 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
-import org.bukkit.event.raid.RaidEvent;
 import org.bukkit.event.raid.RaidFinishEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,7 +25,6 @@ public class PlayerEvents implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        plugin.getGoalsManager().getOnlineSince().put(event.getPlayer().getUniqueId(), System.currentTimeMillis());
 
         plugin.getGoalsManager().getActiveGoals().forEach(goal -> {
             if (goal.getType() == GoalType.PLAYER_JOIN) {
@@ -38,8 +36,6 @@ public class PlayerEvents implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        plugin.getGoalsManager().getOnlineSince().remove(event.getPlayer().getUniqueId());
-
         plugin.getGoalsManager().getActiveGoals().forEach(goal -> {
             if (goal.getType() == GoalType.PLAYER_QUIT) {
                 if(plugin.getGoalsManager().checkRequirements(goal, event.getPlayer(), event.getPlayer().getWorld().getName(), null, null))

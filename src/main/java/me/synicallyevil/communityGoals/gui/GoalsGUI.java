@@ -35,13 +35,13 @@ public class GoalsGUI implements Listener {
     }
 
     public void open(Player player) {
-        List<Goal> allGoals = new ArrayList<>(manager.getAllGoals().values());
+        List<Goal> allGoals = new ArrayList<>(manager.getActiveGoals());
         GoalFilter filter = filters.getOrDefault(player.getUniqueId(), new GoalFilter());
 
         List<Goal> filteredGoals = allGoals.stream()
                 .filter(filter::matches)
                 .sorted(Comparator.comparing(Goal::getType))
-                .collect(Collectors.toList());
+                .toList();
 
         ConfigurationSection guiConfig = plugin.getConfig().getConfigurationSection("gui");
         String guiTitle = ChatColor.translateAlternateColorCodes('&', guiConfig.getString("title", "&2Community Goals"));

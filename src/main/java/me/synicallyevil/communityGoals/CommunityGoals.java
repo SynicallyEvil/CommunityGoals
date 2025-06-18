@@ -8,6 +8,8 @@ import me.synicallyevil.communityGoals.listeners.EntityEvents;
 import me.synicallyevil.communityGoals.listeners.ItemEvents;
 import me.synicallyevil.communityGoals.listeners.PlayerEvents;
 import me.synicallyevil.communityGoals.metrics.Metrics;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -47,6 +49,7 @@ public class CommunityGoals extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EntityEvents(this), this);
         getServer().getPluginManager().registerEvents(new ItemEvents(this), this);
 
+        printStartupBanner();
     }
 
     @Override
@@ -82,11 +85,52 @@ public class CommunityGoals extends JavaPlugin {
         return messagesConfig;
     }
 
+    public void saveGoalsConfig() {
+        if (goalsConfig != null) {
+            try {
+                goalsConfig.save(new File(getDataFolder(), "goals.yml"));
+            } catch (Exception e) {
+                getLogger().severe("Could not save goals configuration: " + e.getMessage());
+            }
+        }
+    }
+
     public GoalsManager getGoalsManager() {
         return goalsManager;
     }
 
     public GoalsGUI getGui() {
         return gui;
+    }
+
+    public void printStartupBanner() {
+        String version = getDescription().getVersion();
+        String date = java.time.LocalDate.now().toString();
+
+        String[] banner = new String[]{
+              "-------------------------------------------------------------------------------------------------",
+              "   ██████╗ ██████╗ ███╗   ███╗███╗   ███╗██╗   ██╗███╗   ██╗██╗████████╗██╗   ██╗",
+              "  ██╔════╝██╔═══██╗████╗ ████║████╗ ████║██║   ██║████╗  ██║██║╚══██╔══╝╚██╗ ██╔╝",
+              "  ██║     ██║   ██║██╔████╔██║██╔████╔██║██║   ██║██╔██╗ ██║██║   ██║    ╚████╔╝",
+              "  ██║     ██║   ██║██║╚██╔╝██║██║╚██╔╝██║██║   ██║██║╚██╗██║██║   ██║     ╚██╔╝",
+              "  ╚██████╗╚██████╔╝██║ ╚═╝ ██║██║ ╚═╝ ██║╚██████╔╝██║ ╚████║██║   ██║      ██║",
+              "   ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝   ╚═╝      ╚═╝",
+              "   ██████╗  ██████╗  █████╗ ██╗     ███████╗",
+              "  ██╔════╝ ██╔═══██╗██╔══██╗██║     ██╔════╝",
+              "  ██║  ███╗██║   ██║███████║██║     ███████╗",
+              "  ██║   ██║██║   ██║██╔══██║██║     ╚════██║",
+              "  ╚██████╔╝╚██████╔╝██║  ██║███████╗███████║",
+              "   ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝",
+              "-------------------------------------------------------------------------------------------------"
+        };
+
+        for (int i = 0; i < banner.length; i++) {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + banner[i]);
+        }
+
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GRAY + "--------------------------------------------------");
+        Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + " CommunityGoals " +
+                ChatColor.WHITE + "v" + version + ChatColor.GRAY + " | Loaded on " + ChatColor.GREEN + date);
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GRAY + "--------------------------------------------------");
     }
 }
