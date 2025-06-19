@@ -94,6 +94,7 @@ public class GoalsManager {
             public void run() {
                 if(cancelTask) {
                     this.cancel();
+
                     return;
                 }
 

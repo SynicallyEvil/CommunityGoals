@@ -10,7 +10,7 @@ public enum GoalType {
     VILLAGER_TRADE("Villager Trade"), //
     ITEM_CRAFT("Item Craft"), //
     ITEM_SMELT("Item Smelt"), //
-    ITEM_REPAIR("Item Repair"), //
+    ITEM_REPAIR("Item Repair"), // //
     FISH_CAUGHT("Fish Caught"), //
     DISTANCE_TRAVELED("Distance Traveled"), //
     POTION_BREW("Potion Brew"), //

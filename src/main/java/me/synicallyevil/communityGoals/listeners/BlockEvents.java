@@ -4,7 +4,7 @@ import me.synicallyevil.communityGoals.CommunityGoals;
 import me.synicallyevil.communityGoals.goals.GoalsManager;
 import me.synicallyevil.communityGoals.goals.enums.GoalType;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Ageable;
+import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,13 +33,13 @@ public class BlockEvents implements Listener {
             }
 
             if(goal.getType() == GoalType.CROP_HARVEST && block.getBlockData() instanceof Ageable ageable){
-                if (ageable.getAge() >= 7) {
+                if (ageable.getAge() >= ageable.getMaximumAge()) {
                     if(manager.checkRequirements(goal, player, player.getWorld().getName(), block.getType().name(), player.getInventory().getItemInMainHand().getType().name()))
                         manager.handleGoalProgress(goal, 1);
                 }
             }
         });
-    } //public boolean checkRequirements(Goal goal, Player player, @Nullable String blockOrEntity)
+    }
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {

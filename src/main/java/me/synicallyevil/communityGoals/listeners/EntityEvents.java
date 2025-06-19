@@ -96,12 +96,12 @@ public class EntityEvents implements Listener {
             return;
 
         Player player = event.getPlayer();
-        if (player.getInventory().getItemInMainHand().getType() != Material.IRON_INGOT)
+        if (player.getInventory().getItemInMainHand().getType() != Material.IRON_INGOT) {
             return;
+        }
 
         AttributeInstance maxHealthAttr = golem.getAttribute(Attribute.MAX_HEALTH);
         if (maxHealthAttr == null) {
-            // Attribute not available, exit
             return;
         }
         double maxHealth = maxHealthAttr.getBaseValue();
@@ -112,7 +112,7 @@ public class EntityEvents implements Listener {
                 double currentHealth = golem.getHealth();
                 if (currentHealth > initialHealth) {
                     manager.getActiveGoals().forEach(goal -> {
-                        if (goal.getType() == GoalType.DAMAGE_TAKEN) {
+                        if (goal.getType() == GoalType.IRON_GOLEM_REPAIR) {
                             if (manager.checkRequirements(goal, player, player.getWorld().getName(), null, null)) {
                                 manager.handleGoalProgress(goal, 1);
                             }
