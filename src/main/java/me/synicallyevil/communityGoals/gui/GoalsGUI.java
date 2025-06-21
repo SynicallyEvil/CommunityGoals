@@ -45,8 +45,16 @@ public class GoalsGUI implements Listener {
 
         ConfigurationSection guiConfig = plugin.getConfig().getConfigurationSection("gui");
         String guiTitle = ChatColor.translateAlternateColorCodes('&', guiConfig.getString("title", "&2Community Goals"));
-        int rows = guiConfig.getInt("rows", 6);
-        Inventory gui = Bukkit.createInventory(null, rows * 9, guiTitle);
+        ConfigurationSection goalItems = guiConfig.getConfigurationSection("goal_item");
+
+        int maxPerRow = 8;
+        int maxRows = 6;
+        int totalGoals = filteredGoals.size();
+        int goalRows = (int) Math.ceil(totalGoals / (double) maxPerRow);
+        int totalRows = Math.min(maxRows, Math.max(goalRows + 2, 3)); // +2 for padding, cap at 6
+        int guiSize = totalRows * 9;
+
+        Inventory gui = Bukkit.createInventory(null, guiSize, guiTitle);
 
         // Filler item
         Material fillerMat = Material.valueOf(guiConfig.getString("filler.material", "BLACK_STAINED_GLASS_PANE"));
@@ -60,54 +68,57 @@ public class GoalsGUI implements Listener {
             gui.setItem(i, filler);
         }
 
-        ConfigurationSection layout = guiConfig.getConfigurationSection("layout");
-        int startSlot = layout.getInt("start-slot", 10);
-        int perRow = layout.getInt("per-row", 7);
-        int spacing = layout.getInt("spacing", 1);
-
-        ConfigurationSection goalItems = guiConfig.getConfigurationSection("goal_item");
+        // Place goal items centered
         int index = 0;
-        for (Goal goal : filteredGoals) {
-            int rowOffset = index / perRow;
-            int colOffset = index % perRow;
-            int slot = startSlot + rowOffset * 9 + colOffset * (spacing + 1);
-            if (slot >= gui.getSize()) break;
+        for (int row = 1; row < totalRows - 1 && index < totalGoals; row++) {
+            int itemsThisRow = Math.min(maxPerRow, totalGoals - index);
+            int startCol = (9 - itemsThisRow) / 2;
 
-            ConfigurationSection itemConfig;
-            if (goal.isExpired()) {
-                itemConfig = goalItems.getConfigurationSection("expired");
-            } else if (goal.getProgress() >= goal.getAmount()) {
-                itemConfig = goalItems.getConfigurationSection("completed");
-            } else {
-                itemConfig = goalItems.getConfigurationSection("active");
+            for (int col = 0; col < itemsThisRow && index < totalGoals; col++) {
+                int slot = row * 9 + startCol + col;
+                if (slot >= gui.getSize()) continue;
+
+                Goal goal = filteredGoals.get(index++);
+
+                ConfigurationSection itemConfig;
+                if (goal.isExpired()) {
+                    itemConfig = goalItems.getConfigurationSection("expired");
+                } else if (goal.getProgress() >= goal.getAmount()) {
+                    itemConfig = goalItems.getConfigurationSection("completed");
+                } else {
+                    itemConfig = goalItems.getConfigurationSection("active");
+                }
+
+                Material itemMat = Material.getMaterial(itemConfig.getString("material", "BOOK"));
+                ItemStack item = new ItemStack(itemMat);
+                ItemMeta meta = item.getItemMeta();
+                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',
+                        itemConfig.getString("name", goal.getDisplay()).replace("%display%", goal.getDisplay())));
+
+                List<String> loreTemplate = itemConfig.getStringList("lore");
+                List<String> lore = new ArrayList<>();
+                for (String line : loreTemplate) {
+                    line = ChatColor.translateAlternateColorCodes('&', line)
+                            .replace("%type%", goal.getType().getDisplayName())
+                            .replace("%progress%", String.valueOf(goal.getProgress()))
+                            .replace("%amount%", String.valueOf(goal.getAmount()))
+                            .replace("%description%", goal.getDescription())
+                            .replace("%time_left%", goal.isTimed() ? formatTimeLeft(goal.getExpiresAt()) : "∞");
+                    lore.add(line);
+                }
+
+                meta.setLore(lore);
+                if (itemConfig.getBoolean("glow", false)) {
+                    meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                    item.addUnsafeEnchantment(Enchantment.UNBREAKING, 1);
+                }
+                if (slot >= gui.getSize()) {
+                    plugin.getLogger().warning("Skipping slot " + slot + " (GUI size: " + gui.getSize() + ")");
+                    continue;
+                }
+                item.setItemMeta(meta);
+                gui.setItem(slot, item);
             }
-
-            Material itemMat = Material.getMaterial(itemConfig.getString("material", "BOOK"));
-            ItemStack item = new ItemStack(itemMat);
-            ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', itemConfig.getString("name", goal.getDisplay())
-                    .replace("%display%", goal.getDisplay())));
-
-            List<String> loreTemplate = itemConfig.getStringList("lore");
-            List<String> lore = new ArrayList<>();
-            for (String line : loreTemplate) {
-                line = ChatColor.translateAlternateColorCodes('&', line)
-                        .replace("%type%", goal.getType().getDisplayName())
-                        .replace("%progress%", String.valueOf(goal.getProgress()))
-                        .replace("%amount%", String.valueOf(goal.getAmount()))
-                        .replace("%description%", goal.getDescription())
-                        .replace("%time_left%", goal.isTimed() ? formatTimeLeft(goal.getExpiresAt()) : "∞");
-                lore.add(line);
-            }
-            meta.setLore(lore);
-            if (itemConfig.getBoolean("glow", false)) {
-                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                item.addUnsafeEnchantment(Enchantment.UNBREAKING, 1);
-            }
-            item.setItemMeta(meta);
-
-            gui.setItem(slot, item);
-            index++;
         }
 
         // Filter Button
@@ -121,7 +132,11 @@ public class GoalsGUI implements Listener {
                 .collect(Collectors.toList());
         filterMeta.setLore(lore);
         filterButton.setItemMeta(filterMeta);
-        gui.setItem(filterBtn.getInt("slot", gui.getSize() - 5), filterButton);
+
+        int filterSlot = filterBtn.getInt("slozzt", gui.getSize() - 5);
+        //if (filterSlot < gui.getSize()) {
+            gui.setItem(filterSlot, filterButton);
+        //}
 
         filters.put(player.getUniqueId(), filter);
         player.openInventory(gui);
